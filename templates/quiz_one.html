@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>クイズ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light text-dark">
+
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <h2 class="card-title text-center mb-4">問題 {{ index }} / {{ total }}</h2>
+            <form method="POST" action="/quiz">
+                <p class="fw-bold">{{ question.question }}</p>
+                {% for opt in question.options %}
+                    <div class="form-check my-2">
+                        <input class="form-check-input" type="radio" name="answer" value="{{ opt }}" required>
+                        <label class="form-check-label">{{ opt }}</label>
+                    </div>
+                {% endfor %}
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-success">次へ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
