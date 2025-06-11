@@ -46,6 +46,8 @@ def result():
         result_data=result_data
     )
 
-# ✅ Flaskアプリの起動コード（これが必要！）
+import os
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # Render が指定するポート番号を取得
+    app.run(host="0.0.0.0", port=port, debug=True)
