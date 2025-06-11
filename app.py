@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+import os
+import json
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -9,13 +11,16 @@ questions = [
     {"question": "かつやは？", "options": ["将軍", "関白", "師匠", "ざむらい"], "answer": "師匠"}
 ]
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def home():
-    session.clear()
-    session["current"] = 0
-    session["score"] = 0
-    session["answers"] = []
-    return redirect(url_for("quiz"))
+    if request.method == "POST":
+        session.clear()
+        session["username"] = request.form["username"]
+        session["current"] = 0
+        session["score"] = 0
+        session["answers"] = []
+        return redirect(url_for("quiz"))
+    return render_template("index.html")  # 新規作成
 
 @app.route("/quiz", methods=["GET", "POST"])
 def quiz():
@@ -31,23 +36,31 @@ def quiz():
         return redirect(url_for("result"))
 
     q = questions[current]
-    session["current"] = session.get("current", 0) + 1
+    session["current"] = current + 1
     return render_template("quiz_one.html", question=q, index=current + 1, total=len(questions))
 
 @app.route("/result")
 def result():
-    answers = session.get("answers", [])
     score = session.get("score", 0)
-    result_data = list(zip(questions, answers))
-    return render_template(
-        "result_with_review.html",
-        score=score,
-        total=len(questions),
-        result_data=result_data
-    )
+    answers = session.get("answers", [])
+    username = session.get("username", "匿名")
 
-import os
+    # --- ランキング保存処理 ---
+    try:
+        with open("ranking.json", "r", encoding="utf-8") as f:
+            ranking = json.load(f)
+    except FileNotFoundError:
+        ranking = []
+
+    ranking.append({"name": username, "score": score})
+    ranking = sorted(ranking, key=lambda x: x["score"], reverse=True)[:5]
+
+    with open("ranking.json", "w", encoding="utf-8") as f:
+        json.dump(ranking, f, ensure_ascii=False, indent=2)
+
+    result_data = list(zip(questions, answers))
+    return render_template("result_with_review.html", score=score, total=len(questions), result_data=result_data, ranking=ranking)
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Render が指定するポート番号を取得
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)

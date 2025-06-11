@@ -38,6 +38,12 @@
         <a href="/" class="btn btn-primary">もう一度挑戦する</a>
     </div>
 </div>
+<h2>ランキング（上位5名）</h2>
+<ol>
+  {% for r in ranking %}
+    <li>{{ r.name }} さん：{{ r.score }} 点</li>
+  {% endfor %}
+</ol>
 
 </body>
 </html>
