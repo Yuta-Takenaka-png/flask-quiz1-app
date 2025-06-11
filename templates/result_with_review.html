@@ -38,12 +38,32 @@
         <a href="/" class="btn btn-primary">もう一度挑戦する</a>
     </div>
 </div>
-<h2>ランキング（上位5名）</h2>
-<ol>
-  {% for r in ranking %}
-    <li>{{ r.name }} さん：{{ r.score }} 点</li>
-  {% endfor %}
-</ol>
+<div class="mt-5">
+    <h2 class="text-center mb-4">🏆 ランキング（上位5名） 🏆</h2>
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="text-center">順位</th>
+                        <th scope="col">名前</th>
+                        <th scope="col" class="text-end">スコア</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in ranking %}
+                    <tr class="{% if loop.index == 1 %}table-warning{% endif %}">
+                        <td class="text-center">{{ loop.index }}</td>
+                        <td>{{ r.name }} さん</td>
+                        <td class="text-end">{{ r.score }} 点</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 
 </body>
 </html>
