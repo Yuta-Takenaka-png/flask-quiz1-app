@@ -31,7 +31,7 @@ def quiz():
         return redirect(url_for("result"))
 
     q = questions[current]
-    session["current"] += 1
+    session["current"] = session.get("current", 0) + 1
     return render_template("quiz_one.html", question=q, index=current + 1, total=len(questions))
 
 @app.route("/result")
